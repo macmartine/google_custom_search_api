@@ -46,9 +46,7 @@ module GoogleCustomSearchApi
         results['next_page'] = results['current_page'] + 1
       end
 
-      if page > 1
-        results['previous_page'] = page - 1
-      end
+      results['previous_page'] = page - 1 if page > 1
     end
 
     ResponseData.new(results)
@@ -86,13 +84,11 @@ module GoogleCustomSearchApi
       return res unless results.keys.include?('queries')
       yield results if block_given?
       res << results
-      if results.queries.keys.include?("nextPage")
-        opts[:start] = results.queries.nextPage.first.startIndex
-      else
-        opts[:start] = nil
-      end
+      opts[:start] = if results.queries.keys.include?('nextPage')
+                       results.queries.nextPage.first.startIndex
+                     end
     end while opts[:start].nil? == false
-    return res
+    res
   end
 
   # Convenience wrapper for the response Hash.
@@ -116,9 +112,10 @@ module GoogleCustomSearchApi
   #  => [3, 4]
   #
   class ResponseData < Hash
-  private
-    def initialize(data={})
-      data.each_pair {|k,v| self[k.to_s] = deep_parse(v) }
+    private
+
+    def initialize(data = {})
+      data.each_pair { |k, v| self[k.to_s] = deep_parse(v) }
     end
 
     def deep_parse(data)
@@ -126,7 +123,7 @@ module GoogleCustomSearchApi
       when Hash
         self.class.new(data)
       when Array
-        data.map {|v| deep_parse(v) }
+        data.map { |v| deep_parse(v) }
       else
         data
       end
@@ -134,20 +131,19 @@ module GoogleCustomSearchApi
 
     def method_missing(*args)
       name = args[0].to_s
-      return self[name] if has_key? name
+      return self[name] if key? name
 
       camelname = name.split('_').map do |w|
-        "#{w[0,1].upcase}#{w[1..-1]}"
-      end.join("")
+        "#{w[0, 1].upcase}#{w[1..-1]}"
+      end.join('')
 
-      if has_key? camelname
+      if key? camelname
         self[camelname]
       else
         super *args
       end
     end
   end
-
 
   private
 
@@ -158,21 +154,21 @@ module GoogleCustomSearchApi
   # http://code.google.com/apis/customsearch/v1/using_rest.html#query-params
   def url(query, opts = {})
     opts[:q] = query
-    opts[:alt] ||= "json"
+    opts[:alt] ||= 'json'
     uri = Addressable::URI.new
     uri.query_values = opts
     begin
       params.merge!(GOOGLE_SEARCH_PARAMS)
     rescue NameError
     end
-    "https://www.googleapis.com/customsearch/v1?" \
-      "key=#{GOOGLE_API_KEY}&cx=#{opts[:google_cx]}&#{uri.query}"
+    'https://www.googleapis.com/customsearch/v1?' \
+      "key=#{GOOGLE_API_KEY}&#{uri.query}"
   end
 
   ##
   # Query Google, and make sure it responds.
   #
   def fetch(url)
-    return HTTParty.get(url)
+    HTTParty.get(url)
   end
 end

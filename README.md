@@ -16,11 +16,10 @@ then
 
 ## Configure
 
-You need to configure ```GOOGLE_SEARCH_CX``` and ```GOOGLE_API_KEY``` to ```config/initializers/google_cse_api.rb```:
+You need to configure ```GOOGLE_API_KEY``` to ```config/initializers/google_cse_api.rb```:
 
 ```
   GOOGLE_API_KEY = "..."
-  GOOGLE_SEARCH_CX = "..."
 ```
 
 Google's API management is confusing at best. At the time of this writing you codes like so:
@@ -34,12 +33,12 @@ Google's API management is confusing at best. At the time of this writing you co
 * In the left column click on `Credentials`
 * Under `API keys` grab your key. This is your `GOOGLE_API_KEY`
 
-### GOOGLE_SEARCH_CX
+### Google search cx
 
 * Go to [Google CSE](https://cse.google.com/cse)
 * Create a search engine and click on it
 * Under `Setup > Tabs > Basic` find `Details` and click `Search engine ID`
-* This is your GOOGLE_SEARCH_CX
+* This is your Google search cx
 * Make sure to add a site under `Sites to search`
 
 ## Use
@@ -49,7 +48,7 @@ Google's API management is confusing at best. At the time of this writing you co
 To perform a search:
 
 ```
-  results = GoogleCustomSearchApi.search("poker")
+  results = GoogleCustomSearchApi.search("poker", cx: YOUR_GOOGLE_SEARCH_CX)
 ```
 Results now contains a raw version and a class'ed version of the data show in ```Sample results``` below.
 
@@ -74,19 +73,19 @@ or
 Google only returns 10 results at a time and a maximum of 100 results. The easiest way to page through results if to use `:page`. Paging is 1 based (1-10). The default page is 1
 
 ```
-  results = GoogleCustomerSearchApi.search("poker", page: 2)
+  results = GoogleCustomerSearchApi.search("poker", page: 2, cx: YOUR_GOOGLE_SEARCH_CX)
   results.pages == 10
   results.current_page == 2
   results.next_page == 3
   results.previous_page == 1
 
-  results = GoogleCustomerSearchApi.search("poker", page: 1)
+  results = GoogleCustomerSearchApi.search("poker", page: 1, cx: YOUR_GOOGLE_SEARCH_CX)
   results.pages == 10
   results.current_page == 1
   results.next_page == 2
   results.previous_page == nil
 
-  results = GoogleCustomerSearchApi.search("poker", page: 10)
+  results = GoogleCustomerSearchApi.search("poker", page: 10, cx: YOUR_GOOGLE_SEARCH_CX)
   results.pages == 10
   results.current_page == 10
   results.next_page == nil
@@ -98,7 +97,7 @@ You can also use `:start` - which can be any number between 1 and 99. The `:page
 Example: get results 13-23
 
 ```
-  results = GoogleCustomerSearchApi.search('poker', start: 13)
+  results = GoogleCustomerSearchApi.search('poker', start: 13, cx: YOUR_GOOGLE_SEARCH_CX)
 ```
 
 See [Custom Search](http://code.google.com/apis/customsearch/v1/using_rest.html) documentation for an explanation of all fields available.
@@ -108,41 +107,41 @@ See [Custom Search](http://code.google.com/apis/customsearch/v1/using_rest.html)
 This method isn't so useful because it's pretty slow (do to fetching up to 10 pages from Google). Helpful for testing sometimes.
 
 ```
-  results = search_and_return_all_results('poker')
+  results = search_and_return_all_results('poker', cx: YOUR_GOOGLE_SEARCH_CX)
   results.first.items.size # == 10
-  
-  search_and_resturn_all_results('poker') do |results|
+
+  search_and_resturn_all_results('poker', cx: YOUR_GOOGLE_SEARCH_CX) do |results|
     results.items.size # == 10  10 times
   end
-  
+
   search_and_return_all_results(
-    '"California cult winery known for its Rhône"') do |results|
+    '"California cult winery known for its Rhône"', cx: YOUR_GOOGLE_SEARCH_CX) do |results|
     results.items.size # == 3  1 time
   end
 ```
 
 ### Errors
 
-Custom Search only returns a maximum of 100 results so - if you try something like 
+Custom Search only returns a maximum of 100 results so - if you try something like
 
 ```
-  results = GoogleCustomSearchApi.search('poker', start: 101)
+  results = GoogleCustomSearchApi.search('poker', start: 101, cx: YOUR_GOOGLE_SEARCH_CX)
 ```
-You get error and empty items. 
+You get error and empty items.
 
 ```
 	{
 	  "error"=> {
 	    "errors"=> [
 	      {
-	        "domain"=>"global", 
-	         "reason"=>"invalid", 
+	        "domain"=>"global",
+	         "reason"=>"invalid",
 	         "message"=>"Invalid Value"
 	      }
-	    ], 
-	    "code"=>400, 
+	    ],
+	    "code"=>400,
 	    "message"=>"Invalid Value"
-	  }, 
+	  },
 	  "items"=>[]
 	}
 ```
@@ -164,7 +163,6 @@ In **config/initializers/google_search.rb**
 
 ```
 GOOGLE_API_KEY = '...'
-GOOGLE_SEARCH_CX = '...'
 ```
 
 In **config/routes.rb**
@@ -181,8 +179,9 @@ class SearchController < ApplicationController
     if params[:q]
       page = params[:page] || 1
       @results = GoogleCustomSearchApi.search(params[:q],
-                                              page: page)
-	end
+                                              page: page,
+                                              cx: YOUR_GOOGLE_SEARCH_CX)
+  end
   end
 end
 ```
@@ -278,7 +277,7 @@ To run tests
 ```
 
 ## Credits
-* Based largely on the gem https://github.com/alexreisner/google_custom_search 
+* Based largely on the gem https://github.com/alexreisner/google_custom_search
 * Awesome ResponseData class from https://github.com/mikedemers/rbing
 * Work done while working on a project for the company http://reInteractive.net in sunny Sydney.  A great ruby shop should you need help with something.
 
