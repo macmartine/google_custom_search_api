@@ -165,8 +165,8 @@ module GoogleCustomSearchApi
       params.merge!(GOOGLE_SEARCH_PARAMS)
     rescue NameError
     end
-    "https://www.googleapis.com/customsearch/v1?" \
-      "key=#{GOOGLE_API_KEY}&cx=#{opts[:google_cx]}&#{uri.query}"
+    'https://www.googleapis.com/customsearch/v1?' \
+      "key=#{GOOGLE_API_KEY}&#{uri.query}"
   end
 
   ##
