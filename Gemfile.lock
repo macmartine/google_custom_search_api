@@ -9,6 +9,7 @@ GEM
   remote: http://rubygems.org/
   specs:
     addressable (2.3.8)
+    ast (2.3.0)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     diff-lcs (1.2.5)
@@ -18,6 +19,10 @@ GEM
       multi_xml (>= 0.5.2)
     json (1.8.3)
     multi_xml (0.5.5)
+    parser (2.4.0.0)
+      ast (~> 2.2)
+    powerpack (0.1.1)
+    rainbow (2.2.1)
     rspec (3.4.0)
       rspec-core (~> 3.4.0)
       rspec-expectations (~> 3.4.0)
@@ -31,7 +36,15 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.4.0)
     rspec-support (3.4.1)
+    rubocop (0.47.1)
+      parser (>= 2.3.3.1, < 3.0)
+      powerpack (~> 0.1)
+      rainbow (>= 1.99.1, < 3.0)
+      ruby-progressbar (~> 1.7)
+      unicode-display_width (~> 1.0, >= 1.0.1)
+    ruby-progressbar (1.8.1)
     safe_yaml (1.0.4)
+    unicode-display_width (1.1.3)
     vcr (3.0.1)
     webmock (1.22.5)
       addressable (< 2.4.0)
@@ -45,8 +58,9 @@ DEPENDENCIES
   google_custom_search_api!
   json
   rspec
+  rubocop
   vcr
   webmock
 
 BUNDLED WITH
-   1.10.6
+   1.14.6

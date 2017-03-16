@@ -1,11 +1,11 @@
-$TESTING=true
-$:.push File.join(File.dirname(__FILE__), '..', 'lib')
+$TESTING = true
+$LOAD_PATH.push File.join(File.dirname(__FILE__), '..', 'lib')
 
 require 'rubygems'
-#require 'webmock/rspec'
+# require 'webmock/rspec'
 require 'json'
 require 'google_custom_search_api'
-#require 'httparty'
+# require 'httparty'
 require 'vcr'
 
 VCR.configure do |c|
